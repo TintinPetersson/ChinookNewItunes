@@ -22,7 +22,10 @@ namespace NotItunesSQLClient
         }
         static void SelectAllCustomers(ICustomerRepository repository)
         {
+            Console.WriteLine("\n***Retrieve all Customers***\n");
             PrintCustomers(repository.GetAllCustomers());
+            Console.WriteLine("\n***Retrieve Page of Select Customers***\n");
+            PrintCustomers(repository.GetPageOfCustomers(10, 10));
         }
         static void SelectCustomer(ICustomerRepository repository)
         {
