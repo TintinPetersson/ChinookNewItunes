@@ -1,5 +1,6 @@
 ﻿using ChinookNewItunes.Models;
 using Microsoft.Data.SqlClient;
+using System.Collections.Generic;
 
 namespace ChinookNewItunes.Repositories
 {
@@ -101,7 +102,30 @@ namespace ChinookNewItunes.Repositories
         }
         public bool AddNewCustomer(Customer customer)
         {
-            throw new NotImplementedException();
+            bool success = false;
+            var sql =
+                    "INSERT INTO Customer (FirstName, LastName, Country, PostalCode, Phone, Email) " +
+                    "VALUES (@firstName, @lastName, @country, @postalCode, @phone, @email); ";
+
+            try
+            {
+                using var connection = new SqlConnection(ConnectionString);
+                connection.Open();
+
+                using var command = new SqlCommand(sql, connection);
+                command.Parameters.AddWithValue("@firstName", customer.FirstName);
+                command.Parameters.AddWithValue("@lastName", customer.LastName);
+                command.Parameters.AddWithValue("@country", customer.Country);
+                command.Parameters.AddWithValue("@postalCode", customer.PostalCode);
+                command.Parameters.AddWithValue("@phone", customer.Phone);
+                command.Parameters.AddWithValue("@email", customer.Email);
+                success = command.ExecuteNonQuery() > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                //Log
+            }
+            return success;
         }
         public bool DeleteCustomer(string id)
         {
