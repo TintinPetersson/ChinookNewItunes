@@ -12,6 +12,8 @@ namespace NotItunesSQLClient
             SelectAllCustomers(customerRepository);
             // POCO : Plain Old C# Object, and it is what we call model objects!
             SelectCustomer(customerRepository);
+
+            AddCustomer(customerRepository);
             // CRUD
             // Get all customers
             // Call on all the different methods that we create in repository's and where we read/write to
@@ -38,7 +40,6 @@ namespace NotItunesSQLClient
         {
             Customer test = new Customer()
             {
-                CustomerId = 23,
                 FirstName = "Test",
                 LastName = "Testson",
                 PostalCode = "533 21",
@@ -48,11 +49,11 @@ namespace NotItunesSQLClient
             };
             if (repository.AddNewCustomer(test))
             {
-                Console.WriteLine("Insert worked!");
+                Console.WriteLine("\n**Insert worked!**");
             }
             else
             {
-                Console.WriteLine("Insert didn't work...");
+                Console.WriteLine("\n**Insert didn't work.**");
             }
         }
         static void UpdateCustomer(ICustomerRepository repository)
