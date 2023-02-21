@@ -73,6 +73,32 @@ namespace ChinookNewItunes.Repositories
             }
             return new Customer();// TODO: Change?
         }
+        public IEnumerable<Customer> GetPageOfCustomers(int limit, int offset)
+        {
+            using var connection = new SqlConnection(ConnectionString);
+            connection.Open();
+
+            var sql = "SELECT CustomerID, FirstName, LastName, Country, " +
+                "PostalCode, Phone, Email FROM Customer ORDER BY CustomerId OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY;";
+
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.Add("@limit", System.Data.SqlDbType.Int).Value = limit;
+            command.Parameters.Add("@offset", System.Data.SqlDbType.Int).Value = offset;
+
+            using SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                yield return new Customer(
+                    reader.GetInt32(0),
+                    SafeGetString(reader, 1),
+                    SafeGetString(reader, 2),
+                    SafeGetString(reader, 3),
+                    SafeGetString(reader, 4),
+                    SafeGetString(reader, 5),
+                    SafeGetString(reader, 6)
+                    );
+            }
+        }
         public bool AddNewCustomer(Customer customer)
         {
             throw new NotImplementedException();
@@ -91,5 +117,6 @@ namespace ChinookNewItunes.Repositories
                 return reader.GetString(colIndex);
             return string.Empty;
         }
+
     }
 }
