@@ -18,6 +18,8 @@ namespace NotItunesSQLClient
             UpdateCustomer(customerRepository);
 
             SelectCustomersPerCountry(customerRepository);
+
+            SelectHighestSpendingCustomer(customerRepository);
             // CRUD
             // Get all customers
             // Call on all the different methods that we create in repository's and where we read/write to
@@ -92,6 +94,17 @@ namespace NotItunesSQLClient
             foreach (var customerCountry in customerCountries)
             {
                 Console.WriteLine("{0,-20}{1,-20}", customerCountry.Country, customerCountry.CustomerCount);
+            }
+        }
+        private static void SelectHighestSpendingCustomer(CustomerRepository customerRepository)
+        {
+            var customerSpenders = customerRepository.GetHighestSpendingCustomers();
+            Console.WriteLine("\n** Highest Spending Customers **");
+            Console.WriteLine("{0,-15}{1,-20}", "Customer", "Total Spent");
+            Console.WriteLine("----------------------------");
+            foreach (var customerSpender in customerSpenders)
+            {
+                Console.WriteLine("{0,-10}{1,-20}", customerSpender.CustomerId, customerSpender.TotalSpent);
             }
         }
         private static void PrintCustomers(IEnumerable<Customer> customers)
