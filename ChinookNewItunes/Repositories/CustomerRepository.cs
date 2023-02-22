@@ -179,12 +179,34 @@ namespace ChinookNewItunes.Repositories
 
             return customerCountries;
         }
+        public IEnumerable<CustomerSpender> GetHighestSpendingCustomers()
+        {
+            List<CustomerSpender> customerSpenders = new List<CustomerSpender>();
+            string query = "SELECT CustomerId, SUM(Total) AS TotalSpent " +
+                           "FROM Invoice " +
+                           "GROUP BY CustomerId " +
+                           "ORDER BY TotalSpent DESC;";
+            using var connection = new SqlConnection(ConnectionString);
+            connection.Open();
+            SqlCommand command = new SqlCommand(query, connection);
+            SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                int customerId = reader.GetInt32(0);
+                decimal totalSpent = reader.GetDecimal(1);
+                customerSpenders.Add(new CustomerSpender { CustomerId = customerId, TotalSpent = totalSpent });
+            }
+            reader.Close();
 
+            return customerSpenders;
+        }
         public static string SafeGetString(SqlDataReader reader, int colIndex)
         {
             if (!reader.IsDBNull(colIndex))
                 return reader.GetString(colIndex);
             return string.Empty;
         }
+
+
     }
 }
