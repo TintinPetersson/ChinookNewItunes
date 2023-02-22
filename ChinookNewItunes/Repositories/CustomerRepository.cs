@@ -157,28 +157,27 @@ namespace ChinookNewItunes.Repositories
                 return success;
             }
         }
-        public Dictionary<string, int> GetCustomerCountByCountry()
+        public IEnumerable<CustomerCountry> GetCustomerCountByCountry()
         {
-            Dictionary<string, int> customerCounts = new Dictionary<string, int>();
+            List<CustomerCountry> customerCountries = new List<CustomerCountry>();
             string query = "SELECT Country, COUNT(*) AS Number_of_Customers " +
                            "FROM Customer " +
                            "GROUP BY Country " +
                            "ORDER BY Number_of_Customers DESC;";
-
             using var connection = new SqlConnection(ConnectionString);
             connection.Open();
 
             SqlCommand command = new SqlCommand(query, connection);
             SqlDataReader reader = command.ExecuteReader();
-
             while (reader.Read())
             {
                 string country = reader.GetString(0);
-                int count = reader.GetInt32(1);
-                customerCounts.Add(country, count);
+                int customerCount = reader.GetInt32(1);
+                customerCountries.Add(new CustomerCountry { Country = country, CustomerCount = customerCount });
             }
             reader.Close();
-            return customerCounts;
+
+            return customerCountries;
         }
 
         public static string SafeGetString(SqlDataReader reader, int colIndex)
