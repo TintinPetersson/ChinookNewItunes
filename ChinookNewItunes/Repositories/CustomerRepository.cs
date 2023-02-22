@@ -127,11 +127,37 @@ namespace ChinookNewItunes.Repositories
             }
             return success;
         }
-        public bool DeleteCustomer(string id)
+        public bool UpdateCustomer(Customer customer, string customerId)
         {
-            throw new NotImplementedException();
+            {
+                bool success = false;
+                var sql =
+                        "UPDATE Customer SET FirstName = @firstName, LastName = @lastName, Country =  @country, " +
+                        "PostalCode = @postalCode, Phone = @phone, Email = @email WHERE CustomerId = @customerId";
+
+                try
+                {
+                    using var connection = new SqlConnection(ConnectionString);
+                    connection.Open();
+
+                    using var command = new SqlCommand(sql, connection);
+                    command.Parameters.Add("@customerId", System.Data.SqlDbType.NVarChar).Value = customerId;
+                    command.Parameters.Add("@firstName", System.Data.SqlDbType.NVarChar).Value = customer.FirstName;
+                    command.Parameters.Add("@lastName", System.Data.SqlDbType.NVarChar).Value = customer.LastName;
+                    command.Parameters.Add("@country", System.Data.SqlDbType.NVarChar).Value = customer.Country;
+                    command.Parameters.Add("@postalCode", System.Data.SqlDbType.NVarChar).Value = customer.PostalCode;
+                    command.Parameters.Add("@phone", System.Data.SqlDbType.NVarChar).Value = customer.Phone;
+                    command.Parameters.Add("@email", System.Data.SqlDbType.NVarChar).Value = customer.Email;
+                    success = command.ExecuteNonQuery() > 0 ? true : false;
+                }
+                catch (Exception ex)
+                {
+                    //Log
+                }
+                return success;
+            }
         }
-        public bool UpdateCustomer(Customer customer)
+        public bool DeleteCustomer(string id)
         {
             throw new NotImplementedException();
         }

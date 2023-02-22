@@ -14,6 +14,8 @@ namespace NotItunesSQLClient
             SelectCustomer(customerRepository);
 
             AddCustomer(customerRepository);
+
+            UpdateCustomer(customerRepository);
             // CRUD
             // Get all customers
             // Call on all the different methods that we create in repository's and where we read/write to
@@ -40,12 +42,12 @@ namespace NotItunesSQLClient
         {
             Customer test = new Customer()
             {
-                FirstName = "Test",
+                FirstName = "Filip",
                 LastName = "Testson",
                 PostalCode = "533 21",
                 Country = "Sweden",
                 Phone = "1234567890",
-                Email = "test.testson@test.com"
+                Email = "Filip.testson@test.com"
             };
             if (repository.AddNewCustomer(test))
             {
@@ -58,7 +60,23 @@ namespace NotItunesSQLClient
         }
         static void UpdateCustomer(ICustomerRepository repository)
         {
-            //PrintCustomer(repository.GetCustomer("Astrid"));
+            Customer test2 = new Customer()
+            {
+                FirstName = "UpdatedTest2",
+                LastName = "Bond",
+                PostalCode = "53330",
+                Country = "Sweden",
+                Phone = "12434244423",
+                Email = "test2.testson@test.com"
+            };
+            if (repository.UpdateCustomer(test2, "60"))
+            {
+                Console.WriteLine("\n**Update customer worked!**");
+            }
+            else
+            {
+                Console.WriteLine("\n**Update customer didn't work.**");
+            }
         }
         static void DeleteCustomer(ICustomerRepository repository)
         {

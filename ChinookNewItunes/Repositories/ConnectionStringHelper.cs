@@ -16,7 +16,7 @@ namespace ChinookNewItunes.Repositories
         {
             SqlConnectionStringBuilder connectionStringBuilder = new SqlConnectionStringBuilder();
             connectionStringBuilder.DataSource = "N-SE-01-4689\\SQLEXPRESS";
-            connectionStringBuilder.DataSource = $"N-SE-01-{Tintins}\\SQLEXPRESS";
+            connectionStringBuilder.DataSource = $"N-SE-01-{Filips}\\SQLEXPRESS";
             connectionStringBuilder.InitialCatalog = "Chinook";
             connectionStringBuilder.IntegratedSecurity = true;
             connectionStringBuilder.TrustServerCertificate = true;
