@@ -10,6 +10,6 @@ namespace ChinookNewItunes.Repositories
         public IEnumerable<Customer> GetPageOfCustomers(int limit, int offset);
         public bool AddNewCustomer(Customer customer);
         public bool UpdateCustomer(Customer customer, string customerId);
-        public bool DeleteCustomer(string id);
+        public Dictionary<string, int> GetCustomerCountByCountry();
     }
 }

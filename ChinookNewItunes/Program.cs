@@ -16,6 +16,8 @@ namespace NotItunesSQLClient
             AddCustomer(customerRepository);
 
             UpdateCustomer(customerRepository);
+
+            SelectCustomersPerCountry(customerRepository);
             // CRUD
             // Get all customers
             // Call on all the different methods that we create in repository's and where we read/write to
@@ -24,18 +26,21 @@ namespace NotItunesSQLClient
             // We use interfaces to have abstract methods in this program class that is competently detach for
             // the database so we can switch database with out changing the program class("Front-end")!!
         }
+
+
+
         static void SelectAllCustomers(ICustomerRepository repository)
         {
-            Console.WriteLine("\n***Retrieve all Customers***\n");
+            Console.WriteLine("\n*** Retrieve all Customers ***\n");
             PrintCustomers(repository.GetAllCustomers());
-            Console.WriteLine("\n***Retrieve Page of Select Customers***\n");
+            Console.WriteLine("\n*** Retrieve Page of Select Customers ***\n");
             PrintCustomers(repository.GetPageOfCustomers(10, 10));
         }
         static void SelectCustomer(ICustomerRepository repository)
         {
-            Console.WriteLine("\nRetrieve a Customer by ID");
+            Console.WriteLine("\n** Retrieve a Customer by ID **");
             PrintCustomer(repository.GetCustomerByID("3"));
-            Console.WriteLine("\nRetrieve a Customer by Name");
+            Console.WriteLine("\n** Retrieve a Customer by Name **");
             PrintCustomer(repository.GetCustomerByName("Frank"));
         }
         static void AddCustomer(ICustomerRepository repository)
@@ -51,11 +56,11 @@ namespace NotItunesSQLClient
             };
             if (repository.AddNewCustomer(test))
             {
-                Console.WriteLine("\n**Insert worked!**");
+                Console.WriteLine("\n** Insert worked! **");
             }
             else
             {
-                Console.WriteLine("\n**Insert didn't work.**");
+                Console.WriteLine("\n** Insert didn't work. **");
             }
         }
         static void UpdateCustomer(ICustomerRepository repository)
@@ -71,16 +76,21 @@ namespace NotItunesSQLClient
             };
             if (repository.UpdateCustomer(test2, "60"))
             {
-                Console.WriteLine("\n**Update customer worked!**");
+                Console.WriteLine("\n** Update customer worked! **");
             }
             else
             {
-                Console.WriteLine("\n**Update customer didn't work.**");
+                Console.WriteLine("\n** Update customer didn't work. **");
             }
         }
-        static void DeleteCustomer(ICustomerRepository repository)
+        private static void SelectCustomersPerCountry(CustomerRepository customerRepository)
         {
-            //PrintCustomer(repository.GetCustomer("Astrid"));
+            var customerCounts = customerRepository.GetCustomerCountByCountry();
+            Console.WriteLine("\n** Customers Per Country **");
+            foreach (var customerCount in customerCounts)
+            {
+                Console.WriteLine($"{customerCount.Key}: {customerCount.Value}");
+            }
         }
         private static void PrintCustomers(IEnumerable<Customer> customers)
         {
