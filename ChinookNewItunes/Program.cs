@@ -85,11 +85,13 @@ namespace NotItunesSQLClient
         }
         private static void SelectCustomersPerCountry(CustomerRepository customerRepository)
         {
-            var customerCounts = customerRepository.GetCustomerCountByCountry();
-            Console.WriteLine("\n** Customers Per Country **");
-            foreach (var customerCount in customerCounts)
+            var customerCountries = customerRepository.GetCustomerCountByCountry();
+            Console.WriteLine("\n** Customer Per Country **");
+            Console.WriteLine("{0,-20}{1,-20}", "Country", "Count");
+            Console.WriteLine("--------------------------");
+            foreach (var customerCountry in customerCountries)
             {
-                Console.WriteLine($"{customerCount.Key}: {customerCount.Value}");
+                Console.WriteLine("{0,-20}{1,-20}", customerCountry.Country, customerCountry.CustomerCount);
             }
         }
         private static void PrintCustomers(IEnumerable<Customer> customers)
