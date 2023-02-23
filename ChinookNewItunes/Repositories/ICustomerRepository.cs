@@ -12,5 +12,6 @@ namespace ChinookNewItunes.Repositories
         public bool UpdateCustomer(Customer customer, string customerId);
         public IEnumerable<CustomerCountry> GetCustomerCountByCountry();
         public IEnumerable<CustomerSpender> GetHighestSpendingCustomers();
+        public List<CustomerGenre> GetMostPopularGenreForCustomer(int customerId);
     }
 }

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ChinookNewItunes.Models
+﻿namespace ChinookNewItunes.Models
 {
-    public readonly record struct CustomerGenre(string CustomerId, );
+    public class CustomerGenre
+    {
+        public int CustomerId { get; set; }
+        public string GenreName { get; set; }
+        public int GenreCount { get; set; }
+    }
+    //public readonly record struct CustomerGenre(int CustomerId, string GernreName, int GernreCount);
 }
