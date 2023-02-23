@@ -1,8 +1,5 @@
 ﻿using ChinookNewItunes.Models;
 using Microsoft.Data.SqlClient;
-using Microsoft.Identity.Client;
-using System.Collections;
-using System.Collections.Generic;
 using System.Data;
 
 namespace ChinookNewItunes.Repositories
@@ -14,9 +11,11 @@ namespace ChinookNewItunes.Repositories
         {
             using var connection = new SqlConnection(ConnectionString);
             connection.Open();
+
             var sql = "SELECT CustomerID, FirstName, LastName, Country, " +
                 "PostalCode, Phone, Email FROM Customer";
             using var command = new SqlCommand(sql, connection);
+
             using SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -31,14 +30,17 @@ namespace ChinookNewItunes.Repositories
                     );
             }
         }
-        public Customer GetCustomerByID(string customerId)
+        public Customer GetCustomerByID(int customerId)
         {
             using var connection = new SqlConnection(ConnectionString);
             connection.Open();
+
             var sql = "SELECT CustomerID, FirstName, LastName, Country, " +
                 "PostalCode, Phone, Email FROM Customer WHERE CustomerId = @customerId";
+
             using var command = new SqlCommand(sql, connection);
-            command.Parameters.Add("@customerId", System.Data.SqlDbType.NVarChar).Value = customerId;
+            command.Parameters.Add("@customerId", SqlDbType.Int).Value = customerId;
+
             using SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -52,16 +54,19 @@ namespace ChinookNewItunes.Repositories
                     SafeGetString(reader, 6)
                     );
             }
-            return new Customer(); // TODO: Change?
+            return new Customer();
         }
         public Customer GetCustomerByName(string customerName)
         {
             using var connection = new SqlConnection(ConnectionString);
             connection.Open();
+
             var sql = "SELECT CustomerID, FirstName, LastName, Country, " +
                 "PostalCode, Phone, Email FROM Customer WHERE FirstName LIKE @customerName";
+
             using var command = new SqlCommand(sql, connection);
             command.Parameters.Add("@customerName", SqlDbType.NVarChar).Value = customerName + '%';
+
             using SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -75,7 +80,7 @@ namespace ChinookNewItunes.Repositories
                     SafeGetString(reader, 6)
                     );
             }
-            return new Customer();// TODO: Change?
+            return new Customer();
         }
         public IEnumerable<Customer> GetPageOfCustomers(int limit, int offset)
         {
@@ -109,7 +114,6 @@ namespace ChinookNewItunes.Repositories
             var sql =
                     "INSERT INTO Customer (FirstName, LastName, Country, PostalCode, Phone, Email) " +
                     "VALUES (@firstName, @lastName, @country, @postalCode, @phone, @email); ";
-
             try
             {
                 using var connection = new SqlConnection(ConnectionString);
@@ -126,11 +130,11 @@ namespace ChinookNewItunes.Repositories
             }
             catch (Exception ex)
             {
-                //Log
+                Console.WriteLine(ex);
             }
             return success;
         }
-        public bool UpdateCustomer(Customer customer, string customerId)
+        public bool UpdateCustomer(Customer customer, int customerId)
         {
             {
                 bool success = false;
@@ -144,18 +148,18 @@ namespace ChinookNewItunes.Repositories
                     connection.Open();
 
                     using var command = new SqlCommand(sql, connection);
-                    command.Parameters.Add("@customerId", System.Data.SqlDbType.NVarChar).Value = customerId;
-                    command.Parameters.Add("@firstName", System.Data.SqlDbType.NVarChar).Value = customer.FirstName;
-                    command.Parameters.Add("@lastName", System.Data.SqlDbType.NVarChar).Value = customer.LastName;
-                    command.Parameters.Add("@country", System.Data.SqlDbType.NVarChar).Value = customer.Country;
-                    command.Parameters.Add("@postalCode", System.Data.SqlDbType.NVarChar).Value = customer.PostalCode;
-                    command.Parameters.Add("@phone", System.Data.SqlDbType.NVarChar).Value = customer.Phone;
-                    command.Parameters.Add("@email", System.Data.SqlDbType.NVarChar).Value = customer.Email;
+                    command.Parameters.Add("@customerId", SqlDbType.Int).Value = customerId;
+                    command.Parameters.Add("@firstName", SqlDbType.NVarChar).Value = customer.FirstName;
+                    command.Parameters.Add("@lastName", SqlDbType.NVarChar).Value = customer.LastName;
+                    command.Parameters.Add("@country", SqlDbType.NVarChar).Value = customer.Country;
+                    command.Parameters.Add("@postalCode", SqlDbType.NVarChar).Value = customer.PostalCode;
+                    command.Parameters.Add("@phone", SqlDbType.NVarChar).Value = customer.Phone;
+                    command.Parameters.Add("@email", SqlDbType.NVarChar).Value = customer.Email;
                     success = command.ExecuteNonQuery() > 0 ? true : false;
                 }
                 catch (Exception ex)
                 {
-                    //Log
+                    Console.WriteLine(ex);
                 }
                 return success;
             }
@@ -167,10 +171,12 @@ namespace ChinookNewItunes.Repositories
                            "FROM Customer " +
                            "GROUP BY Country " +
                            "ORDER BY Number_of_Customers DESC;";
+
             using var connection = new SqlConnection(ConnectionString);
             connection.Open();
 
             SqlCommand command = new SqlCommand(query, connection);
+
             SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -178,8 +184,8 @@ namespace ChinookNewItunes.Repositories
                 int customerCount = reader.GetInt32(1);
                 customerCountries.Add(new CustomerCountry { Country = country, CustomerCount = customerCount });
             }
-            reader.Close();
 
+            reader.Close();
             return customerCountries;
         }
         public IEnumerable<CustomerSpender> GetHighestSpendingCustomers()
@@ -189,9 +195,12 @@ namespace ChinookNewItunes.Repositories
                            "FROM Invoice " +
                            "GROUP BY CustomerId " +
                            "ORDER BY TotalSpent DESC;";
+
             using var connection = new SqlConnection(ConnectionString);
             connection.Open();
+
             SqlCommand command = new SqlCommand(query, connection);
+
             SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -207,7 +216,7 @@ namespace ChinookNewItunes.Repositories
         {
             List<CustomerGenre> popularGenres = new List<CustomerGenre>();
 
-            string sqlQuery = 
+            string sqlQuery =
                         @"SELECT TOP 2 customer.CustomerId, genre.Name AS GenreName, COUNT(track.GenreId) AS GenreCount
                         FROM Customer customer
                         INNER JOIN Invoice invoice ON customer.CustomerId = invoice.CustomerId
@@ -220,11 +229,11 @@ namespace ChinookNewItunes.Repositories
 
             using var connection = new SqlConnection(ConnectionString);
             connection.Open();
+
             SqlCommand command = new SqlCommand(sqlQuery, connection);
             command.Parameters.AddWithValue("@CustomerId", customerId);
 
             SqlDataReader reader = command.ExecuteReader();
-
             while (reader.Read())
             {
                 CustomerGenre customerGenre = new CustomerGenre();
@@ -244,7 +253,7 @@ namespace ChinookNewItunes.Repositories
             return popularGenres;
 
         }
-      
+
         public static string SafeGetString(SqlDataReader reader, int colIndex)
         {
             if (!reader.IsDBNull(colIndex))
