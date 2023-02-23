@@ -13,4 +13,6 @@ Functionalities included in the C# application are as follows:
 - Update the details of an existing customer in the database.
 - Retrieve the number of customers in each country, ordered in descending order by the count.
 - Retrieve a list of customers who have spent the most money on purchases in descending order of total spending.
-  Given a customer, retrieve their most popular genre based on the number of tracks associated with each genre in their purchase history. In case of a tie, display all     tied genres.
+  Given a customer, retrieve their most popular genre based on the number of tracks associated with each genre in their purchase history. In case of a tie, display all tied genres.
+  
+  Made by: Filip Lindell & Tintin Petersson.
