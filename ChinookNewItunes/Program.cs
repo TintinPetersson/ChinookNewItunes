@@ -34,7 +34,7 @@ namespace NotItunesSQLClient
         static void SelectCustomer(ICustomerRepository repository)
         {
             Console.WriteLine("\n** Retrieve a Customer by ID **");
-            PrintCustomer(repository.GetCustomerByID("3"));
+            PrintCustomer(repository.GetCustomerByID(3));
             Console.WriteLine("\n** Retrieve a Customer by Name **");
             PrintCustomer(repository.GetCustomerByName("Frank"));
         }
@@ -62,16 +62,19 @@ namespace NotItunesSQLClient
         {
             Customer test2 = new Customer()
             {
-                FirstName = "UpdatedTest2",
+                CustomerId = 50,
+                FirstName = "Stefan",
                 LastName = "Bond",
                 PostalCode = "53330",
                 Country = "Sweden",
                 Phone = "12434244423",
                 Email = "test2.testson@test.com"
             };
-            if (repository.UpdateCustomer(test2, "60"))
+            Customer oldCustomer = repository.GetCustomerByID(test2.CustomerId);
+            if (repository.UpdateCustomer(test2, test2.CustomerId))
             {
                 Console.WriteLine("\n** Update customer worked! **");
+                Console.WriteLine($"Updated customer name: {oldCustomer.FirstName} => {test2.FirstName}");
             }
             else
             {
@@ -84,6 +87,7 @@ namespace NotItunesSQLClient
             Console.WriteLine("\n** Customer Per Country **");
             Console.WriteLine("{0,-20}{1,-20}", "Country", "Count");
             Console.WriteLine("--------------------------");
+
             foreach (var customerCountry in customerCountries)
             {
                 Console.WriteLine("{0,-20}{1,-20}", customerCountry.Country, customerCountry.CustomerCount);
@@ -95,9 +99,10 @@ namespace NotItunesSQLClient
             Console.WriteLine("\n** Highest Spending Customers **");
             Console.WriteLine("{0,-15}{1,-20}", "Customer", "Total Spent");
             Console.WriteLine("----------------------------");
+
             foreach (var customerSpender in customerSpenders)
             {
-                Console.WriteLine("{0,-10}{1,-20}", customerSpender.CustomerId, customerSpender.TotalSpent);
+                Console.WriteLine("{0,-15}{1,-30}", customerSpender.CustomerId, customerSpender.TotalSpent);
             }
         }
         private static void PrintMostPopularGenresForCustomer(CustomerRepository customerRepository, int customerId)
@@ -109,7 +114,6 @@ namespace NotItunesSQLClient
                 Console.WriteLine($"\n** Most popular genres for customer: {customerId}. **");
 
                 int count = 0;
-
                 foreach (CustomerGenre customerGenre in popularGenres)
                 {
                     if (popularGenres[0].GenreCount == popularGenres[count].GenreCount)
