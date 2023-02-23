@@ -9,8 +9,9 @@ namespace NotItunesSQLClient
         static void Main(string[] args)
         {
             var customerRepository = new CustomerRepository { ConnectionString = ConnectionStringHelper.GetConnectionString() };
+
             SelectAllCustomers(customerRepository);
-            // POCO : Plain Old C# Object, and it is what we call model objects!
+
             SelectCustomer(customerRepository);
 
             AddCustomer(customerRepository);
@@ -20,17 +21,9 @@ namespace NotItunesSQLClient
             SelectCustomersPerCountry(customerRepository);
 
             SelectHighestSpendingCustomer(customerRepository);
-            // CRUD
-            // Get all customers
-            // Call on all the different methods that we create in repository's and where we read/write to
-            // database, if we read for data base we convert database tables to c# objects with:
-            // 1, Connect 2, Make a command 3, Read data from database 4, convert to c# object!
-            // We use interfaces to have abstract methods in this program class that is competently detach for
-            // the database so we can switch database with out changing the program class("Front-end")!!
+
+            PrintMostPopularGenresForCustomer(customerRepository, 12);
         }
-
-
-
         static void SelectAllCustomers(ICustomerRepository repository)
         {
             Console.WriteLine("\n*** Retrieve all Customers ***\n");
@@ -105,6 +98,30 @@ namespace NotItunesSQLClient
             foreach (var customerSpender in customerSpenders)
             {
                 Console.WriteLine("{0,-10}{1,-20}", customerSpender.CustomerId, customerSpender.TotalSpent);
+            }
+        }
+        private static void PrintMostPopularGenresForCustomer(CustomerRepository customerRepository, int customerId)
+        {
+            List<CustomerGenre> popularGenres = customerRepository.GetMostPopularGenreForCustomer(customerId);
+
+            if (popularGenres.Count > 0)
+            {
+                Console.WriteLine($"\n** Most popular genres for customer: {customerId}. **");
+
+                int count = 0;
+
+                foreach (CustomerGenre customerGenre in popularGenres)
+                {
+                    if (popularGenres[0].GenreCount == popularGenres[count].GenreCount)
+                    {
+                        Console.WriteLine($"- {customerGenre.GenreName}: {customerGenre.GenreCount} tracks");
+                    }
+                    count++;
+                }
+            }
+            else
+            {
+                Console.WriteLine($"\n** No genres found for customer: {customerId}. **");
             }
         }
         private static void PrintCustomers(IEnumerable<Customer> customers)

@@ -1,6 +1,9 @@
 ﻿using ChinookNewItunes.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.Identity.Client;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 
 namespace ChinookNewItunes.Repositories
 {
@@ -58,7 +61,7 @@ namespace ChinookNewItunes.Repositories
             var sql = "SELECT CustomerID, FirstName, LastName, Country, " +
                 "PostalCode, Phone, Email FROM Customer WHERE FirstName LIKE @customerName";
             using var command = new SqlCommand(sql, connection);
-            command.Parameters.Add("@customerName", System.Data.SqlDbType.NVarChar).Value = customerName + '%';
+            command.Parameters.Add("@customerName", SqlDbType.NVarChar).Value = customerName + '%';
             using SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -83,8 +86,8 @@ namespace ChinookNewItunes.Repositories
                 "PostalCode, Phone, Email FROM Customer ORDER BY CustomerId OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY;";
 
             using var command = new SqlCommand(sql, connection);
-            command.Parameters.Add("@limit", System.Data.SqlDbType.Int).Value = limit;
-            command.Parameters.Add("@offset", System.Data.SqlDbType.Int).Value = offset;
+            command.Parameters.Add("@limit", SqlDbType.Int).Value = limit;
+            command.Parameters.Add("@offset", SqlDbType.Int).Value = offset;
 
             using SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
@@ -200,13 +203,53 @@ namespace ChinookNewItunes.Repositories
 
             return customerSpenders;
         }
+        public List<CustomerGenre> GetMostPopularGenreForCustomer(int customerId)
+        {
+            List<CustomerGenre> popularGenres = new List<CustomerGenre>();
+
+            string sqlQuery = 
+                        @"SELECT TOP 2 customer.CustomerId, genre.Name AS GenreName, COUNT(track.GenreId) AS GenreCount
+                        FROM Customer customer
+                        INNER JOIN Invoice invoice ON customer.CustomerId = invoice.CustomerId
+                        INNER JOIN InvoiceLine invoiceLine ON invoice.InvoiceId = invoiceLine.InvoiceId
+                        INNER JOIN Track track ON invoiceLine.TrackId = track.TrackId
+                        INNER JOIN Genre genre ON track.GenreId = genre.GenreId
+                        WHERE customer.CustomerId = @customerId
+                        GROUP BY customer.CustomerId, genre.Name
+                        ORDER BY GenreCount DESC";
+
+            using var connection = new SqlConnection(ConnectionString);
+            connection.Open();
+            SqlCommand command = new SqlCommand(sqlQuery, connection);
+            command.Parameters.AddWithValue("@CustomerId", customerId);
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                CustomerGenre customerGenre = new CustomerGenre();
+
+                customerGenre.CustomerId = reader.GetInt32(0);
+                customerGenre.GenreName = reader.GetString(1);
+                customerGenre.GenreCount = reader.GetInt32(2);
+
+                if (customerGenre.GenreCount == 0)
+                {
+                    break;
+                }
+
+                popularGenres.Add(customerGenre);
+            }
+
+            return popularGenres;
+
+        }
+      
         public static string SafeGetString(SqlDataReader reader, int colIndex)
         {
             if (!reader.IsDBNull(colIndex))
                 return reader.GetString(colIndex);
             return string.Empty;
         }
-
-
     }
 }

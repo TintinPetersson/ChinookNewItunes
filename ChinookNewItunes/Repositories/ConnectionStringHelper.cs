@@ -15,8 +15,8 @@ namespace ChinookNewItunes.Repositories
         public static string GetConnectionString()
         {
             SqlConnectionStringBuilder connectionStringBuilder = new SqlConnectionStringBuilder();
-            connectionStringBuilder.DataSource = $"(localdb)\\MSSQLLocalDB";
-            //connectionStringBuilder.DataSource = $"N-SE-01-{Filips}\\SQLEXPRESS";
+            //connectionStringBuilder.DataSource = $"(localdb)\\MSSQLLocalDB";
+            connectionStringBuilder.DataSource = $"N-SE-01-{Filips}\\SQLEXPRESS";
             connectionStringBuilder.InitialCatalog = "Chinook";
             connectionStringBuilder.IntegratedSecurity = true;
             connectionStringBuilder.TrustServerCertificate = true;
